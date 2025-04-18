@@ -8,5 +8,17 @@ pipeline{
                 }
             }
         }
-    }
-}    
+        stage('stage2') {
+            steps {
+                script {
+                     sh ''' 
+                     mkdir folder1
+                     touch file1
+                     echo "this is first data input to file1 by using pipeline" > file1
+                    '''                            
+                }
+            }
+        }
+    }               
+                    
+}
