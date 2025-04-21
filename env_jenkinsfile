@@ -11,9 +11,8 @@ pipeline {
                 script {
                     echo 'Hello World ${A}'
                 }
-                sh 
-                     '''
-                     echo "hi $A "
+                  sh '''
+                     echo "hi $A " 
                      '''           
             }  
         }
