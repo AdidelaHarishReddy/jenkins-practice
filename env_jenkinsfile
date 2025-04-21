@@ -9,7 +9,7 @@ pipeline {
         stage('stage1') { 
             steps {
                 script {
-                    echo 'Hello World ${env.A}'
+                    echo "Hello World ${env.A}"
                 }
                   sh '''
                      echo "hi $A " 
