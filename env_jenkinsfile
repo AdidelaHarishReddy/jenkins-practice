@@ -19,7 +19,7 @@ pipeline {
         stage('stage2') {  
             steps {
                 script {
-                    echo 'Hello World'
+                    echo" Hello World ${env.A}"
                 }
                      sh ''' 
                      ls -lrt
