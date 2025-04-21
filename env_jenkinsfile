@@ -1,0 +1,30 @@
+pipeline{
+    agent none 
+    environment {
+        A=murali
+    }
+
+
+    stages {
+        stage('stage1'){ 
+            {agent {label 'slave1'}}
+            steps {
+                script {
+                    echo 'Hello World ${A}'
+                }
+                sh '''
+                     echo "hi $A "           }  
+        }
+        stage('stage2') {
+            {agent {label 'slave2'}} 
+            steps {
+                script {
+                     sh ''' 
+                     ls -lrt
+                     echo "this is first ${A} pipeline" > file1
+                    '''                            
+                }
+            }
+        }
+    }               
+}   
