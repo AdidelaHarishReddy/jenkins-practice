@@ -29,10 +29,10 @@ pipeline {
         }
         stage(lint){
             steps{
-                script{
+                sh '''
                     echo "doing the syntax testing
                     \n by using the lint tool"
-                }
+                 '''
             }
         }    
         stage(parallel){
