@@ -28,7 +28,6 @@ pipeline {
             }
         }
         stage(lint){
-            agent{label:Agent2}
             steps{
                 sh '''
                     echo "doing the syntax
