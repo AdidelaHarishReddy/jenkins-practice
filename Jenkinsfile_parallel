@@ -27,6 +27,14 @@ pipeline {
                     url: "${env.GIT_URL}"
             }
         }
+        stage(lint){
+            steps{
+                script{
+                    echo "doing the syntax testing
+                    \n by using the lint tool"
+                }
+            }
+        }    
         stage(parallel){
             parallel{
                  
