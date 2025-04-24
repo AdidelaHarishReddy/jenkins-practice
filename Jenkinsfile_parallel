@@ -6,7 +6,7 @@ pipeline {
         DB_URL = '13.234.66.227'
         BRANCH = 'main'
         GIT_URL = 'https://github.com/AdidelaHarishReddy/jenkins-practice.git'
-        CRED_ID = 'tocken of git hub'
+        CRED_ID = 'github_jenkinspractice'
     }
 
     stages {
