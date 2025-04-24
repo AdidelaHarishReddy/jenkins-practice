@@ -30,7 +30,8 @@ pipeline {
         stage(lint){
             steps{
                 sh '''
-                    echo "doing the syntax testing by using the lint tool"
+                    echo "doing the syntax
+                     testing by using the lint tool"
                  '''
             }
         }    
