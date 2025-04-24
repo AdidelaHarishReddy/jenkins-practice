@@ -14,7 +14,8 @@ pipeline {
                   sh '''
                      echo "hi $A " 
                      '''           
-            }  
+            }   
+            
         }
         stage('stage2') {  
             steps {
@@ -22,7 +23,6 @@ pipeline {
                     echo" Hello World ${env.A}"
                 }
                      sh ''' 
-                     ls -lrt
                      echo "this is first ${A} pipeline"
                     '''                            
                 
