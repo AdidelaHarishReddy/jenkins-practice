@@ -25,9 +25,9 @@ pipeline {
             }
         }
         stage('main') { 
-            // when {
-            //     return params.BRANCH==main
-            //     }
+            when {
+                return params.BRANCH == 'main'
+                }
             steps {
                 script {
                     echo "Hello World ${env.A} ${params.PERSON}"
