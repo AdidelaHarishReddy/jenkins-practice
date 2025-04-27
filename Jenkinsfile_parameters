@@ -1,0 +1,40 @@
+pipeline {
+    agent any 
+    environment {
+        A="murali"
+    }
+    parameters{
+        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+       text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
+       booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+       choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+       password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
+    }
+
+
+    stages {
+        stage('stage1') { 
+            steps {
+                script {
+                    echo "Hello World ${env.A} ${param.name}"
+                    echo "hello mr ${param.defaultValue}"
+                }
+                  sh '''
+                     echo "hi $A " 
+                     '''           
+            }   
+            
+        }
+        stage('stage2') {  
+            steps {
+                script {
+                    echo" Hello World ${env.A}"
+                }
+                     sh ''' 
+                     echo "this is first ${A} pipeline"
+                    '''                            
+                
+            }
+        }
+    }               
+}   
