@@ -44,7 +44,10 @@ pipeline {
         }
         
         stage('build') {
-            when { return params.BRANCH == 'build' }
+            when {
+               expression {
+                      return params.BRANCH == 'build'
+                    }
             steps {
                 script {
                     echo "Hello World it's build"
@@ -56,7 +59,11 @@ pipeline {
         }
         
         stage('production') {
-            when { return params.BRANCH == 'production' }
+            when {
+        expression {
+            return params.BRANCH == 'production'
+        }
+
             steps {
                 script {
                     echo "Hello World it's production"
