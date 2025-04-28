@@ -31,7 +31,9 @@ pipeline {
             when {
         expression {
             return params.BRANCH == 'main'
-        }
+            }
+            }
+
             steps {
                 script {
                     echo "Hello World ${env.A} ${params.PERSON}"
@@ -48,6 +50,7 @@ pipeline {
                expression {
                       return params.BRANCH == 'build'
                     }
+            }
             steps {
                 script {
                     echo "Hello World it's build"
@@ -63,6 +66,7 @@ pipeline {
         expression {
             return params.BRANCH == 'production'
         }
+            }
 
             steps {
                 script {
