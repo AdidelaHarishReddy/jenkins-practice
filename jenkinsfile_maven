@@ -25,9 +25,6 @@ pipeline {
         stage('build') {
             
             steps {
-                script {
-                    echo "Hello World it's build"
-                }
                 sh ''' 
                     mvn clean package
                 '''                            
