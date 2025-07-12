@@ -1,0 +1,82 @@
+pipeline {
+    agent { label 'worker1' }
+    
+    environment {
+        GIT_REPO = 'https://github.com/AdidelaHarishReddy/myProject.git'
+        DOCKER_IMAGE = 'harishreddy1234/realproject'
+        //EC2_INSTANCE_IP = 'your-ec2-instance-ip'
+        //EC2_SSH_USER = 'ec2-user'
+        BACKEND_DIR = 'backend'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [],
+                 userRemoteConfigs: [[credentialsId: 'git-hub_token',
+                  url: 'https://github.com/AdidelaHarishReddy/myProject.git']])
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                dir(env.BACKEND_DIR) {
+                    script {
+                        // Get current timestamp for version tagging
+                        sh """
+                             date=\$(date +%Y%m%d-%H%M%S)
+                             docker build -t ${env.DOCKER_IMAGE}:\$date .
+                             docker tag ${env.DOCKER_IMAGE}:\$date ${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                           """
+                    }
+                }
+            }
+        }
+        
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    // Login to Docker Hub
+                    sh """
+                       docker login
+                       docker push ${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                       
+                       """
+                }
+            }
+        }
+        
+        stage('Deploy to EC2 worker node') {
+            steps {
+                script {
+                        sh  """
+                                # Run the new container
+                                number=\$(( ${env.BUILD_NUMBER}-1 ))
+                                container="my_app\$number" 
+                                docker stop "\$container" || true
+                                docker rm "\$container" || true
+                                docker run -d -p 8000:8000 --name my_app${env.BUILD_NUMBER} ${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                            """
+                    }
+                }
+            }
+        }
+    
+    post {
+        success {
+             script {
+            slackSend(color: 'good', message: "✅ Pipeline SUCCESSFUL: ${env.JOB_NAME} - ${env.BUILD_NUMBER}")
+
+            def previousTag = "${env.DOCKER_IMAGE}:${env.BUILD_NUMBER.toInteger() - 1}"
+
+            sh """
+                docker image inspect ${previousTag} >/dev/null 2>&1 && \
+                docker rmi ${previousTag} || echo "No old image found"
+            """
+        }
+        }
+        failure {
+            slackSend(color: 'danger', message: "Pipeline FAILED: ${env.JOB_NAME} - ${env.BUILD_NUMBER}")
+        }
+    }
+}
