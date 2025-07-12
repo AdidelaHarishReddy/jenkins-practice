@@ -65,7 +65,7 @@ pipeline {
     post {
         success {
              script {
-            slackSend(color: 'good', message: "✅ Pipeline SUCCESSFUL: ${env.JOB_NAME} - ${env.BUILD_NUMBER}")
+            slackSend(color: 'good', message: "Pipeline SUCCESSFUL: ${env.JOB_NAME} - ${env.BUILD_NUMBER}")
 
             def previousTag = "${env.DOCKER_IMAGE}:${env.BUILD_NUMBER.toInteger() - 1}"
 
