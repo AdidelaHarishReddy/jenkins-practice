@@ -10,8 +10,12 @@ pipeline {
                         url: 'https://github.com/AdidelaHarishReddy/jenkins_shred_library.git',
                         credentialsId: 'git-hub_token',
                         branch: 'main'
+                        
                 ]
                 gitCheckout(config)
+                sh '''
+                    ls -a
+                '''
             }
         }
     }
