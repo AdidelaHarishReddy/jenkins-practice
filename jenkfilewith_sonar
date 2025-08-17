@@ -11,7 +11,7 @@ pipeline {
                         credentialsId: 'git-hub_token',
                         branch: 'main'
                     ]
-                    checkout.groovy(config)
+                    gitcheckout.groovy(config)
                     sh '''
                         ls -a
                     '''
