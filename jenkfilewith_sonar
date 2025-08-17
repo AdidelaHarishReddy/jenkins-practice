@@ -1,0 +1,32 @@
+@Library("my_library") _
+pipeline {
+    agent any
+    stages{
+        stage('checkout'){
+            steps{
+                script{
+                    echo "Checking out code from Git repository"
+                    def config = [
+                        url: 'https://github.com/AdidelaHarishReddy/jenkins_shred_library.git',
+                        credentialsId: 'git-hub_token',
+                        branch: 'main'
+                ]
+                gitCheckout(config)
+            }
+        }
+    }
+
+}
+}
+   
+    
+    // post {
+    //     always {
+    //         script {
+    //             echo "Cleaning up old Docker containers"
+    //             sh """
+    //                 docker ps -a | grep 'Exited' | awk '{print \$1}' | xargs -r docker rm
+    //             """
+    //         }
+    //     }
+    // }
