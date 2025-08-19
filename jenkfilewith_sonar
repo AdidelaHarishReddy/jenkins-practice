@@ -18,6 +18,21 @@ pipeline {
                 }
             }
         }
+        stage('code quality checking') {
+        steps {
+            script {
+                withSonarQubeEnv('sonarserver') {
+                    echo "code quality checking the project"
+                    sh '''
+                        pysonar scanner
+                        // pysonar --sonar-project-key=my_project
+                    '''
+                }
+            }
+        }
+    }
+    }
+    
     }
     // post {
     //     always {
