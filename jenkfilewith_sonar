@@ -24,8 +24,8 @@ pipeline {
                 withSonarQubeEnv('sonarserver') {
                     echo "code quality checking the project"
                     sh '''
-                        pysonar scanner
-                        // pysonar --sonar-project-key=my_project
+                        sonar-scanner
+                        --sonar-project-key=my_project
                     '''
                 }
             }
