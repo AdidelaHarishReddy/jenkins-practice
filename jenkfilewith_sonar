@@ -70,7 +70,7 @@ pipeline {
         }
         steps {
             script {
-                 docker.withRegistry('https://registry.example.com', "${DOCKER_CREDENTIALS_ID}") {
+                 docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
                      frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} .")
                      sh """
                          trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_image_report.html
