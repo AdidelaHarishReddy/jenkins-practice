@@ -25,8 +25,8 @@ pipeline {
                     echo "code quality checking the project"
                     sh '''
                         sonar-scanner -Dsonar.projectKey=my_project
-                        // sonar-scanner
-                        // --sonar-project-key=my_project
+                        # sonar-scanner.
+                        # --sonar-project-key=my_project
                     '''
                 }
             }
