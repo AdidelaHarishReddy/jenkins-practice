@@ -34,64 +34,66 @@ pipeline {
                 }
         }
         stage('check quality gate result') {
-        steps {
-            script {
-                timeout(time: 3, unit: 'MINUTES') {
-                    echo "Checking quality gate result"
-                    waitForQualityGate abortPipeline: true
+            steps {
+                script {
+                    timeout(time: 3, unit: 'MINUTES') {
+                        echo "Checking quality gate result"
+                        waitForQualityGate abortPipeline: true
+                    }
                 }
             }
         }
-        }
         stage('tryvi fs scan') {
-        steps {
-            script {
-                echo "Running Tryvi fs scan"
-                sh '''
-                    wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
-                    trivy fs . --format template --template "@html.tpl" --severity HIGH,CRITICAL -o trivy_report.html
-                '''
-                publishHTML (target : [allowMissing: false,
-                             alwaysLinkToLastBuild: true,
-                             keepAll: true,
-                             reportDir: './',
-                             reportFiles: 'trivy_report.html',
-                             reportName: 'trivy vulnerability report',
-                             reportTitles: 'The Report'])
+            steps {
+                script {
+                    echo "Running Tryvi fs scan"
+                    sh '''
+                        wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+                        trivy fs . --format template --template "@html.tpl" --severity HIGH,CRITICAL -o trivy_report.html
+                    '''
+                    publishHTML (target : [allowMissing: false,
+                                 alwaysLinkToLastBuild: true,
+                                 keepAll: true,
+                                 reportDir: './',
+                                 reportFiles: 'trivy_report.html',
+                                 reportName: 'trivy vulnerability report',
+                                 reportTitles: 'The Report'])
+                }
             }
-        }
         }
         stage('docker build frontend') {
-        environment {
-            DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
-            IMAGE_NAME = 'harishreddy1234/frontend'
-            DOCKER_IMAGE_TAG = 'latest'
-            DOCKERFILE_SRC = 'frontend/Dockerfile'
-        }
+            environment {
+                DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
+                IMAGE_NAME = 'harishreddy1234/frontend'
+                DOCKER_IMAGE_TAG = 'latest'
+                DOCKERFILE_SRC = 'frontend/Dockerfile'
+            }
         steps {
             script {
-                 docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-                     frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} .")
-                     sh """
-                         trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_image_report.html
-                     """
-                     publishHTML (target : [allowMissing: false,
-                             alwaysLinkToLastBuild: true,
-                             keepAll: true,
-                             reportDir: './',
-                             reportFiles: 'trivy_image_scan_report.html',
-                             reportName: 'trivy image vulnerability report',
-                             reportTitles: 'The image Report'])
-                     frontend_image.push()
-                 }
+                     docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                         frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} .")
+                         sh """
+                             trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_image_report.html
+                         """
+                         publishHTML (target : [allowMissing: false,
+                                 alwaysLinkToLastBuild: true,
+                                 keepAll: true,
+                                 reportDir: './',
+                                 reportFiles: 'trivy_image_scan_report.html',
+                                 reportName: 'trivy image vulnerability report',
+                                 reportTitles: 'The image Report'])
+                         frontend_image.push()
+                    }
+                }
             }
-        }
         }
 
     }
     post {
-        clearWorkspace()
-    }
+        always {
+          cleanWs()
+        }
+    }    
 }
     
 
