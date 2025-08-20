@@ -63,7 +63,7 @@ pipeline {
     }
     stage('docker build frontend') {
         environment {
-            DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+            DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
             IMAGE_NAME = 'harishreddy1234/frontend'
             DOCKER_IMAGE_TAG = 'latest'
             DOCKERFILE_SRC = 'frontend/Dockerfile'
