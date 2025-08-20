@@ -43,7 +43,19 @@ pipeline {
             }
         }
     }
-    
+    stage('tryvi fs scan') {
+        steps {
+            script {
+                echo "Running Tryvi fs scan"
+                sh '''
+                    wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+                    tryvi fs scan --format template --template "@html.tpl" --severity HIGH,CRITICAL -O trivy_report.html
+                '''
+                
+            }
+        }
+    }
+
     }
 }
     // post {
