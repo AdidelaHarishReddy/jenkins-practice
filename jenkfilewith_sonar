@@ -19,21 +19,21 @@ pipeline {
             }
         }
         stage('code quality checking') {
-        steps {
-            script {
-                withSonarQubeEnv('sonarserver') {
-                    echo "code quality checking the project"
-                    sh '''
-                        sonar-scanner 
-                        #-Dsonar.projectKey=my_project
-                        # sonar-scanner.
-                        # --sonar-project-key=my_project
-                    '''
+                steps {
+                    script {
+                        withSonarQubeEnv('sonarserver') {
+                            echo "code quality checking the project"
+                            sh '''
+                                sonar-scanner 
+                                #-Dsonar.projectKey=my_project
+                                # sonar-scanner.
+                                # --sonar-project-key=my_project
+                            '''
+                        }
+                    }
                 }
-            }
         }
-    }
-    stage('check quality gate result') {
+        stage('check quality gate result') {
         steps {
             script {
                 timeout(time: 3, unit: 'MINUTES') {
@@ -42,8 +42,8 @@ pipeline {
                 }
             }
         }
-    }
-    stage('tryvi fs scan') {
+        }
+        stage('tryvi fs scan') {
         steps {
             script {
                 echo "Running Tryvi fs scan"
@@ -60,8 +60,8 @@ pipeline {
                              reportTitles: 'The Report'])
             }
         }
-    }
-    stage('docker build frontend') {
+        }
+        stage('docker build frontend') {
         environment {
             DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
             IMAGE_NAME = 'harishreddy1234/frontend'
@@ -86,18 +86,12 @@ pipeline {
                  }
             }
         }
-    }
+        }
 
     }
+    post {
+        clearWorkspace()
+    }
 }
-    // post {
-    //     always {
-    //         script {
-    //             echo "Cleaning up old Docker containers"
-    //             sh """
-    //                 docker ps -a | grep 'Exited' | awk '{print \$1}' | xargs -r docker rm
-    //             """
-    //         }
-    //     }
-    // }
+    
 
