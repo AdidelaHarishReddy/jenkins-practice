@@ -61,6 +61,32 @@ pipeline {
             }
         }
     }
+    stage('docker build frontend') {
+        environment {
+            DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+            IMAGE_NAME = 'harishreddy1234/frontend'
+            DOCKER_IMAGE_TAG = 'latest'
+            DOCKERFILE_SRC = 'frontend/Dockerfile'
+        }
+        steps {
+            script {
+                 docker.withRegistry('https://registry.example.com', "${DOCKER_CREDENTIALS_ID}") {
+                     frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} .")
+                     sh """
+                         trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_image_report.html
+                     """
+                     publishHTML (target : [allowMissing: false,
+                             alwaysLinkToLastBuild: true,
+                             keepAll: true,
+                             reportDir: './',
+                             reportFiles: 'trivy_image_scan_report.html',
+                             reportName: 'trivy image vulnerability report',
+                             reportTitles: 'The image Report'])
+                     frontend_image.push()
+                 }
+            }
+        }
+    }
 
     }
 }
