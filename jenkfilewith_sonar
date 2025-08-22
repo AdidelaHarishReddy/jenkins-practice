@@ -43,10 +43,10 @@ pipeline {
                 }
             }
         }
-        stage('tryvi fs scan') {
+        stage('trivy fs scan') {
             steps {
                 script {
-                    echo "Running Tryvi fs scan"
+                    echo "Running Trivy fs scan"
                     sh '''
                         wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
                         trivy fs . --format template --template "@html.tpl" --severity HIGH,CRITICAL -o trivy_report.html
@@ -56,7 +56,7 @@ pipeline {
                                  keepAll: true,
                                  reportDir: './',
                                  reportFiles: 'trivy_report.html',
-                                 reportName: 'trivy vulnerability report',
+                                 reportName: 'trivy vulnerability fs report',
                                  reportTitles: 'The Report'])
                 }
             }
@@ -68,10 +68,10 @@ pipeline {
                 DOCKER_IMAGE_TAG = 'latest'
                 DOCKERFILE_SRC = 'frontend/Dockerfile'
             }
-        steps {
+            steps {
             script {
                      docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-                         frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} .")
+                         frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} ./frontend/")
                          sh """
                              trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL --exit-code 1 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_image_report.html
                          """
@@ -89,11 +89,7 @@ pipeline {
         }
 
     }
-    // post {
-    //     always {
-    //       cleanWs()
-    //     }
-    // }    
+    
 }
     
 
