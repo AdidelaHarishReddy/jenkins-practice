@@ -65,26 +65,47 @@ pipeline {
             environment {
                 DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
                 IMAGE_NAME = 'harishreddy1234/frontend'
+                BACKEND_IMAGE_NAME = 'harishreddy1234/backend'
                 DOCKER_IMAGE_TAG = 'latest'
                 DOCKERFILE_SRC = 'frontend/Dockerfile'
+                BACKEND_DOCKERFILE_SRC = 'backend/Dockerfile'
             }
             steps {
-            script {
-                echo "Building Docker image for frontend"
-                     docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-                         frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} ./frontend/")
-                         sh """
-                             trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_image_report.html
-                         """
-                         publishHTML (target : [allowMissing: false,
-                                 alwaysLinkToLastBuild: true,
-                                 keepAll: true,
-                                 reportDir: './',
-                                 reportFiles: 'trivy_image_report.html',
-                                 reportName: 'trivy image vulnerability report',
-                                 reportTitles: 'The image Report'])
-                         frontend_image.push()
-                    }
+                script {
+                    echo "Building Docker image for frontend"
+                         docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                             frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} ./frontend/")
+                             sh """
+                                 trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_frontend_image_report.html
+                             """
+                             publishHTML (target : [allowMissing: false,
+                                     alwaysLinkToLastBuild: true,
+                                     keepAll: true,
+                                     reportDir: './',
+                                     reportFiles: 'trivy_frontend_image_report.html',
+                                     reportName: 'trivy frontend image vulnerability report',
+                                     reportTitles: 'The frontend image Report'])
+                             frontend_image.push()
+                        }
+                }
+            }
+            steps {
+                script {
+                    echo "Building Docker image for backend"
+                         docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                             backend_image = docker.build("${BACKEND_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${BACKEND_DOCKERFILE_SRC} ./backend/")
+                             sh """
+                                 trivy image --format template --template "@html.tpl" --severity HIGH,CRITICAL ${BACKEND_IMAGE_NAME}:${DOCKER_IMAGE_TAG} -o trivy_backend_image_report.html
+                             """
+                             publishHTML (target : [allowMissing: false,
+                                     alwaysLinkToLastBuild: true,
+                                     keepAll: true,
+                                     reportDir: './',
+                                     reportFiles: 'trivy_backend_image_report.html',
+                                     reportName: 'trivy backend image vulnerability report',
+                                     reportTitles: 'The backend image Report'])
+                             backend_image.push()
+                        }
                 }
             }
         }
