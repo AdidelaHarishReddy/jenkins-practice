@@ -65,10 +65,8 @@ pipeline {
             environment {
                 DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
                 IMAGE_NAME = 'harishreddy1234/frontend'
-                BACKEND_IMAGE_NAME = 'harishreddy1234/backend'
                 DOCKER_IMAGE_TAG = 'latest'
                 DOCKERFILE_SRC = 'frontend/Dockerfile'
-                BACKEND_DOCKERFILE_SRC = 'backend/Dockerfile'
             }
             steps {
                 script {
@@ -88,6 +86,14 @@ pipeline {
                              frontend_image.push()
                         }
                 }
+            }
+        }    
+        stage('docker build backend') {
+            environment {
+                DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
+                BACKEND_IMAGE_NAME = 'harishreddy1234/backend'
+                DOCKER_IMAGE_TAG = 'latest'
+                BACKEND_DOCKERFILE_SRC = 'backend/Dockerfile'
             }
             steps {
                 script {
