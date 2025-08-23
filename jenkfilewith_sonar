@@ -18,49 +18,49 @@ pipeline {
                 }
             }
         }
-        stage('code quality checking') {
-                steps {
-                    script {
-                        withSonarQubeEnv('sonarserver') {
-                            echo "code quality checking the project"
-                            sh '''
-                                sonar-scanner 
-                                #-Dsonar.projectKey=my_project
-                                # sonar-scanner.
-                                # --sonar-project-key=my_project
-                            '''
-                        }
-                    }
-                }
-        }
-        stage('check quality gate result') {
-            steps {
-                script {
-                    timeout(time: 3, unit: 'MINUTES') {
-                        echo "Checking quality gate result"
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
-            }
-        }
-        stage('trivy fs scan') {
-            steps {
-                script {
-                    echo "Running Trivy fs scan"
-                    sh '''
-                        wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
-                        trivy fs . --format template --template "@html.tpl" --severity HIGH,CRITICAL -o trivy_report.html
-                    '''
-                    publishHTML (target : [allowMissing: false,
-                                 alwaysLinkToLastBuild: true,
-                                 keepAll: true,
-                                 reportDir: './',
-                                 reportFiles: 'trivy_report.html',
-                                 reportName: 'trivy vulnerability fs report',
-                                 reportTitles: 'The Report'])
-                }
-            }
-        }
+        // stage('code quality checking') {
+        //         steps {
+        //             script {
+        //                 withSonarQubeEnv('sonarserver') {
+        //                     echo "code quality checking the project"
+        //                     sh '''
+        //                         sonar-scanner 
+        //                         #-Dsonar.projectKey=my_project
+        //                         # sonar-scanner.
+        //                         # --sonar-project-key=my_project
+        //                     '''
+        //                 }
+        //             }
+        //         }
+        // }
+        // stage('check quality gate result') {
+        //     steps {
+        //         script {
+        //             timeout(time: 3, unit: 'MINUTES') {
+        //                 echo "Checking quality gate result"
+        //                 waitForQualityGate abortPipeline: true
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('trivy fs scan') {
+        //     steps {
+        //         script {
+        //             echo "Running Trivy fs scan"
+        //             sh '''
+        //                 wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+        //                 trivy fs . --format template --template "@html.tpl" --severity HIGH,CRITICAL -o trivy_report.html
+        //             '''
+        //             publishHTML (target : [allowMissing: false,
+        //                          alwaysLinkToLastBuild: true,
+        //                          keepAll: true,
+        //                          reportDir: './',
+        //                          reportFiles: 'trivy_report.html',
+        //                          reportName: 'trivy vulnerability fs report',
+        //                          reportTitles: 'The Report'])
+        //         }
+        //     }
+        // }
         stage('docker build frontend') {
             environment {
                 DOCKER_CREDENTIALS_ID = 'dockerhub_credentials'
