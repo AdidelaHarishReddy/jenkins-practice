@@ -70,9 +70,9 @@ pipeline {
             }
             steps {
             script {
-                        sh '''
-                        whoami
-                        '''
+                        // sh '''
+                        // whoami
+                        // '''
                      docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
                          frontend_image = docker.build("${IMAGE_NAME}:${DOCKER_IMAGE_TAG}", "-f ${DOCKERFILE_SRC} ./frontend/")
                          sh """
